@@ -24,6 +24,9 @@ OPENOCD_FLAGS := -f interface/stlink.cfg -f target/stm32f1x.cfg
 
 GDB := arm-none-eabi-gdb
 
+BEAR := bear
+CDB := compile_commands.json
+
 all: $(BUILD_DIR)/$(TARGET)
 
 $(BUILD_DIR)/$(TARGET): $(OBJS)
@@ -46,6 +49,10 @@ flash: $(BUILD_DIR)/$(TARGET)
 debug: $(BUILD_DIR)/$(TARGET)
 	$(GDB) $< -ex "target extended-remote :3333"
 
-.PHONY: clean all flash
+compdb:
+	mkdir -p $(BUILD_DIR)
+	$(BEAR) --output $(BUILD_DIR)/$(CDB) -- make -B
+
+.PHONY: clean all flash compdb
 
 -include $(DEPS)
