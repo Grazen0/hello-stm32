@@ -1,7 +1,6 @@
 #include "startup.h"
 #include "main.h"
 #include "stdinc.h"
-#include "stm32f103xb.h"
 #include <stm32f1xx.h>
 
 static void default_handler(void)
