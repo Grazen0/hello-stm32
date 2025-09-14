@@ -1,6 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-void main(void);
+void setup(void);
+
+void loop(void);
 
 #endif

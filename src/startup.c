@@ -1,6 +1,8 @@
 #include "startup.h"
 #include "main.h"
 #include "stdinc.h"
+#include "stm32f103xb.h"
+#include <stm32f1xx.h>
 
 static void default_handler(void)
 {
@@ -20,7 +22,7 @@ void systick_handler(void) __attribute__((weak, alias("default_handler")));
 
 const u32 isr_vector[ISR_VECTOR_SIZE_WORDS]
     __attribute__((section(".isr_vector"))) = {
-        STACK_POINTER_INIT_ADDRESS,
+        (u32)&_estack,
         (u32)reset_handler,
         (u32)nmi_handler,
         (u32)hard_fault_handler,
@@ -44,7 +46,7 @@ void reset_handler(void)
     const u32 BSS_SIZE = (u32)&_ebss - (u32)&_sbss;
 
     // Copy .data from FLASH to SRAM
-    const u8 *const flash_data = (u8 *)&_etext;
+    const u8 *const flash_data = (u8 *)&_sidata;
     u8 *const sram_data = (u8 *)&_sdata;
 
     for (u32 i = 0; i < DATA_SIZE; ++i)
@@ -56,5 +58,8 @@ void reset_handler(void)
     for (u32 i = 0; i < BSS_SIZE; ++i)
         bss[i] = 0;
 
-    main();
+    setup();
+
+    while (true)
+        loop();
 }

@@ -8,5 +8,7 @@ pkgs.mkShell {
     gcc-arm-embedded
     glibc_multi # Provides gnu/stubs-32.h
     openocd
+    usbutils
+    xxd
   ];
 }

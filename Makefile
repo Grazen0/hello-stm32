@@ -1,25 +1,28 @@
 TARGET := hello.elf
-BOARD := STM32F410Rx
+BOARD := STM32F103xB
 
 BUILD_DIR := ./build
 SRC_DIRS := ./src
 
-SRCS := $(shell find $(SRC_DIRS) -name '*.c' -or -name '*.s')
+SRCS := $(shell find $(SRC_DIRS) -name '*.c' -or -name '*.s') \
+		./external/CMSIS/Device/ST/STM32F1/Source/Templates/system_stm32f1xx.c
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
 INC_DIRS := ./src \
-			./external/CMSIS/Device/ST/STM32F4/Include \
+			./external/CMSIS/Device/ST/STM32F1/Include \
 			./external/CMSIS/CMSIS/Core/Include
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CC := arm-none-eabi-gcc
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
-CFLAGS := -mcpu=cortex-m4 -mthumb -nostdlib -std=c23 -D$(BOARD)
+CFLAGS := -mcpu=cortex-m3 -mthumb -nostdlib -D$(BOARD) -g -std=c23
 LDFLAGS := -T ./data/linker_script.ld
 
-PROGRAMMER := openocd
-PROGRAMMER_FLAGS := -f interface/stlink.cfg -f target/stm32f4x.cfg
+OPENOCD := openocd
+OPENOCD_FLAGS := -f interface/stlink.cfg -f target/stm32f1x.cfg
+
+GDB := arm-none-eabi-gdb
 
 all: $(BUILD_DIR)/$(TARGET)
 
@@ -38,7 +41,10 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 flash: $(BUILD_DIR)/$(TARGET)
-	$(PROGRAMMER) $(PROGRAMMER_FLAGS) -c "program $(BUILD_DIR)/$(TARGET) verify reset exit"
+	$(OPENOCD) $(OPENOCD_FLAGS) -c "program $< verify reset"
+
+debug: $(BUILD_DIR)/$(TARGET)
+	$(GDB) $< -ex "target extended-remote :3333"
 
 .PHONY: clean all flash
 
