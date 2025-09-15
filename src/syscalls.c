@@ -69,19 +69,19 @@ int _read(const int file, char *const ptr, const int len)
 
 void *_sbrk(const int incr)
 {
-    extern char __bss_end__;
+    extern void __bss_end__;
 
-    static char *heap_end = &__bss_end__;
+    static void *heap_end = &__bss_end__;
 
-    char *stack_ptr_char = (char *)__get_MSP();
+    void *const stack_ptr = (void *)__get_MSP();
 
-    if (heap_end + incr > stack_ptr_char) {
+    if (heap_end + incr > stack_ptr) {
         // Heap and stack collision
         while (true)
             ;
     }
 
-    char *const prev_heap_end = heap_end;
+    void *const prev_heap_end = heap_end;
     heap_end += incr;
     return prev_heap_end;
 }
