@@ -9,16 +9,21 @@ static void default_handler(void)
         ;
 }
 
-void __libc_init_array();
-
 void nmi_handler(void) __attribute__((weak, alias("default_handler")));
+
 void hard_fault_handler(void) __attribute__((weak, alias("default_handler")));
+
 void bus_fault_handler(void) __attribute__((weak, alias("default_handler")));
+
 void usage_fault_handler(void) __attribute__((weak, alias("default_handler")));
+
 void svcall_handler(void) __attribute__((weak, alias("default_handler")));
+
 void debug_monitor_handler(void)
     __attribute__((weak, alias("default_handler")));
+
 void pendsv_handler(void) __attribute__((weak, alias("default_handler")));
+
 void systick_handler(void) __attribute__((weak, alias("default_handler")));
 
 const u32 isr_vector[ISR_VECTOR_SIZE_WORDS]
@@ -58,6 +63,8 @@ void reset_handler(void)
 
     for (u32 i = 0; i < BSS_SIZE; ++i)
         bss[i] = 0;
+
+    extern void __libc_init_array();
 
     __libc_init_array();
     main();
