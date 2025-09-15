@@ -88,6 +88,9 @@ void *_sbrk(const int incr)
 
 int _write(const int file, const char *const ptr, const int len)
 {
+    if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) == 0)
+        return len;
+
     struct {
         int fd;
         const char *buf;
