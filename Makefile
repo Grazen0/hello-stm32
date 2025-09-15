@@ -16,7 +16,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CC := arm-none-eabi-gcc
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
-CFLAGS := -mcpu=cortex-m3 -mthumb -nostdlib -D$(BOARD) -g -std=c23
+CFLAGS := -mcpu=cortex-m3 -mthumb --specs=nano.specs -D$(BOARD) -g -std=c23
 LDFLAGS := -T ./data/linker_script.ld
 
 OPENOCD := openocd
@@ -47,7 +47,7 @@ flash: $(BUILD_DIR)/$(TARGET)
 	$(OPENOCD) $(OPENOCD_FLAGS) -c "program $< verify reset"
 
 debug: $(BUILD_DIR)/$(TARGET)
-	$(GDB) $< -ex "target extended-remote :3333"
+	$(GDB) $<
 
 compdb:
 	mkdir -p $(BUILD_DIR)

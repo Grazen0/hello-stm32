@@ -24,6 +24,10 @@ SECTIONS
         *(.text.*)
         *(.rodata)
         *(.rodata.*)
+        KEEP(*(.init))
+        KEEP(*(.fini))
+        *(.eh_frame)
+        *(.ARM.exidx)
 
         . = ALIGN(4);
         _etext = .;
@@ -35,7 +39,12 @@ SECTIONS
     {
         . = ALIGN(4);
         _sdata = .;
-        *(.data*)
+
+        *(.data)
+        *(.data.*)
+        KEEP(*(.init_array))
+        KEEP(*(.fini_array))
+
         . = ALIGN(4);
         _edata = .;
     } > SRAM AT > FLASH
@@ -44,12 +53,14 @@ SECTIONS
     {
         . = ALIGN(4);
         _sbss = .;
+        __bss_start__ = _sbss;
 
         *(.bss)
         *(.bss.*)
 
         . = ALIGN(4);
         _ebss = .;
+        __bss_end__ = _ebss;
     } > SRAM
 }
 
