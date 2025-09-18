@@ -30,7 +30,7 @@ void delay_ms(const u32 ms)
 
 constexpr u32 LED_PIN = 13;
 
-int main(void)
+static void init_clock(void)
 {
     // Turn on HSE
     RCC->CR |= RCC_CR_HSEON;
@@ -45,6 +45,11 @@ int main(void)
 
     SystemCoreClockUpdate();
     SysTick_Config(SystemCoreClock / 1000);
+}
+
+int main(void)
+{
+    init_clock();
 
     // Enable port C GPIO clock
     RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
